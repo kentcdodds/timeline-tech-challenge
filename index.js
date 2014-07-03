@@ -8,30 +8,29 @@ var argv = require('minimist')(process.argv.slice(2)),
 // Respond to request with a 404 error
 function send404(res) {
 	res.writeHead(404);
-	res.write('404 Not Found');
+	res.write('<h1>404 Not Found</h1>');
 	res.end();
 }
 
 server = http.createServer(function (req, res) {
-	console.log(req.url);
+	var url = req.url,
+		file = null;
 
-	var url = null,
-		file;
+	// Normalize index
+	if (url === '/') {
+		url = '/index.html';
+	}
 
 	// Whitelist files so that protected files can't be requested
-	if (req.url === '/' || req.url === '/index.html') {
-		url = 'index.html'
-	} else if (req.url === '/timeline.json') {
-		url = 'timeline.json';
-	} else if (req.url.indexOf('/css/') === 0) {
-		url = req.url;
-	} else if (req.url.indexOf('/dist/') === 0) {
-		url = req.url;
+	if (url === '/index.html' ||
+		url === '/timeline.json' ||
+		url.indexOf('/css/') === 0 ||
+		url.indexOf('/dist/') === 0) {
+		file = path.join(__dirname, url);
 	}
 
 	// If file exists pipe it to response, otherwise send 404
-	if (url !== null) {
-		file = path.join(__dirname, url);
+	if (file !== null) {
 		fs.exists(file, function (exists) {
 			if (!exists) {
 				send404(res);
