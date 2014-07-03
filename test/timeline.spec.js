@@ -11,6 +11,10 @@ describe('timeline', function () {
 	    {
 	      "age": 4,
 	      "content": "learned to ride a bike"
+		},
+	    {
+	      "age": 12,
+	      "content": "was successfully potty trained"
 	    }
 	  ]
 	};
@@ -96,7 +100,7 @@ describe('timeline', function () {
 		});
 	});
 
-	describe('controls', function () {
+	describe('play', function () {
 		var timeline;
 
 		beforeEach(function () {
@@ -113,20 +117,70 @@ describe('timeline', function () {
 			expect(typeof timeline.play).toEqual('function');
 		});
 
-		it('should provide a pause method', function () {
-			expect(typeof timeline.pause).toEqual('function');
-		});
-
-		it('should provide a reset method', function () {
-			expect(typeof timeline.reset).toEqual('function');
-		});
-
 		it('should set state to pause when play is called', function () {
 			timeline.render();
 			var button = timeline.element.querySelector('#control');
 			button.innerHTML = '';
 			timeline.play();
+
 			expect(button.innerHTML).toEqual('Pause');
+		});
+
+		it('should create timer when play is called', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+			timeline.play();
+
+			expect(timeline.timer).toNotEqual(undefined);
+		});
+
+		it('should create frames when play is called', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+			timeline.play();
+
+			expect(Array.isArray(timeline.frames)).toBe(true);
+			expect(timeline.frames.length).toEqual(MOCK_DATA.events.length);
+			expect(timeline.frames[0]).toEqual(4);
+			expect(timeline.frames[1]).toEqual(8);
+			expect(timeline.frames[2]).toEqual(34);
+		});
+
+		it('should track current frame when play is called', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+			timeline.play();
+
+			expect(timeline.current).toEqual(0);
+		});
+
+		it('should reuse existing frames & current', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+			timeline.frames = [1, 2, 3];
+			timeline.current = 37;
+			timeline.play();
+
+			expect(timeline.frames).toEqual([1, 2, 3]);
+			expect(timeline.current).toEqual(37);
+		});
+	});
+
+	describe('pause', function () {
+		var timeline;
+
+		beforeEach(function () {
+			timeline = new Timeline();
+		});
+
+		afterEach(function () {
+			if (timeline.element && timeline.element.parentNode) {
+				timeline.element.parentNode.removeChild(timeline.element);
+			}
+		});
+
+		it('should provide a pause method', function () {
+			expect(typeof timeline.pause).toEqual('function');
 		});
 
 		it('should set state to play when pause is called', function () {
@@ -134,7 +188,56 @@ describe('timeline', function () {
 			var button = timeline.element.querySelector('#control');
 			button.innerHTML = '';
 			timeline.pause();
+
 			expect(button.innerHTML).toEqual('Play');
+		});
+
+		it('should cancel timer when pause is called', function () {
+			timeline.render();
+			timeline.play();
+			timeline.pause();
+
+			expect(timeline.timer).toEqual(undefined);
+		});
+
+		it('should preserve frames & current when pause is called', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+			timeline.play();
+			timeline.current = 1;
+			timeline.pause();
+
+			expect(Array.isArray(timeline.frames)).toEqual(true);
+			expect(timeline.current).toEqual(1);
+		});
+	});
+
+	describe('reset', function () {
+		var timeline;
+
+		beforeEach(function () {
+			timeline = new Timeline();
+		});
+
+		afterEach(function () {
+			if (timeline.element && timeline.element.parentNode) {
+				timeline.element.parentNode.removeChild(timeline.element);
+			}
+		});
+
+		it('should provide a reset method', function () {
+			expect(typeof timeline.reset).toEqual('function');
+		});
+
+		it('should reset frames & current when reset is called', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+			timeline.play();
+			timeline.current = 1;
+			timeline.reset();
+
+			expect(timeline.frames).toEqual(undefined);
+			expect(timeline.current).toEqual(undefined);
 		});
 	});
 });

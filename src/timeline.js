@@ -67,11 +67,12 @@ var Timeline = (function (window, document, undefined) {
 	 */
 	Timeline.prototype.fetch = function (callback) {
 		if (typeof this.data === 'undefined') {
-			var xhr = new XMLHttpRequest();
+			var xhr = new XMLHttpRequest(),
+				self = this;
 			xhr.onload = function () {
 				try {
-					this.data = JSON.parse(this.responseText);
-					callback(this.data);
+					self.data = JSON.parse(this.responseText);
+					callback(self.data);
 				} catch (e) {
 					// Ignore exception
 					// This may happen if url cannot be resolved
@@ -110,6 +111,50 @@ var Timeline = (function (window, document, undefined) {
 	 */
 	Timeline.prototype.play = function () {
 		this.__state(State.PAUSE);
+
+		// Shortcircuit if data hasn't been fetched
+		if (!this.data) {
+			return;
+		}
+
+		// Reuse existing frames and current if available
+		if (typeof this.frames === 'undefined' ||
+			typeof this.current === 'undefined') {
+			this.frames = [];
+			for (var i=0, l=this.data.events.length; i<l; i++) {
+				var event = this.data.events[i],
+					start = event.age,
+					end = this.data.events[i+1] ? this.data.events[i+1].age : this.data.age;
+				this.frames[i] = end - start;
+			}
+
+			this.current = 0;
+		}
+
+		// Setup timer to advance frames
+		var self = this;
+		this.timer = setInterval(function () {
+			self.frames[self.current]--;
+			if (self.frames[self.current] === 0) {
+				self.current++;
+				if (self.current < self.frames.length) {
+					advance(self.current - 1);
+				} else {
+					self.__state(State.RESET);
+				}
+			}
+		}, 2000);
+
+		function advance(current) {
+			var frames = self.element.querySelector('#frames').children;
+			frames[current + 1].className = 'frame';
+			frames[current + 2].className = 'frame active';
+		}
+
+		// Advance to first slide
+		if (this.current === 0 && this.frames.length > 0) {
+			advance(-1);
+		}
 	};
 
 	/**
@@ -117,6 +162,9 @@ var Timeline = (function (window, document, undefined) {
 	 */
 	Timeline.prototype.pause = function () {
 		this.__state(State.PLAY);
+
+		clearInterval(this.timer);
+		delete this.timer;
 	};
 
 	/**
@@ -124,6 +172,9 @@ var Timeline = (function (window, document, undefined) {
 	 */
 	Timeline.prototype.reset = function () {
 		this.__state(State.PLAY);
+
+		delete this.frames;
+		delete this.current;
 	};
 
 	return Timeline;
