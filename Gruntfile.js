@@ -23,8 +23,17 @@ module.exports = function (grunt) {
 				files: ['src/**/*.js', 'test/**/*.js'],
 				tasks: ['test']
 			}
+		},
+
+		uglify: {
+			dist: {
+				files: {
+					'dist/timeline.min.js': ['src/timeline.js']
+				}
+			}
 		}
 	});
 
 	grunt.registerTask('test', ['jshint', 'karma:single']);
+	grunt.registerTask('build', ['uglify']);
 };
