@@ -25,6 +25,8 @@ server = http.createServer(function (req, res) {
 		url = 'timeline.json';
 	} else if (req.url.indexOf('/css/') === 0) {
 		url = req.url;
+	} else if (req.url.indexOf('/dist/') === 0) {
+		url = req.url;
 	}
 
 	// If file exists pipe it to response, otherwise send 404

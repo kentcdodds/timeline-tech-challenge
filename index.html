@@ -1,10 +1,17 @@
 <!doctype html>
 <html>
+
 <meta charset="utf-8"/>
 <title>Timeline</title>
 
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
 
+<body>
+
+<script src="dist/timeline.min.js"></script>
+<script>new Timeline('/timeline.json').render(document.body);</script>
+
+<!--
 <div id="timeline">
 	<div id="frames">
 		<div class="frame active">At age 0, Chip was born</div>
@@ -18,16 +25,17 @@
 </div>
 
 <script>
-	var frames = document.querySelectorAll('.frame'),
-		index = 0,
-		timer;
+ 	var frames = document.querySelectorAll('.frame'),
+ 		index = 0,
+ 		timer;
 
-	timer = setInterval(function () {
-		if (index + 1 < frames.length) {
-			frames[index].className = 'frame';
-			frames[++index].className = 'frame active';
-		} else {
-			clearInterval(timer);
-		}
-	}, 2500);
+ 	timer = setInterval(function () {
+ 		if (index + 1 < frames.length) {
+ 			frames[index].className = 'frame';
+ 			frames[++index].className = 'frame active';
+ 		} else {
+ 			clearInterval(timer);
+ 		}
+ 	}, 2500);
 </script>
+-->
