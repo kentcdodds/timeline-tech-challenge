@@ -72,6 +72,20 @@ describe('timeline', function () {
 			expect(frames.children[0].className).toEqual('frame active');
 			expect(frames.children[0].innerHTML).toEqual(MOCK_DATA.firstName + ' ' + MOCK_DATA.lastName);
 		});
+
+		it('should protect against xss', function () {
+			var dangerous = '<script>alert(\'foo\');</script>',
+				safe = '&lt;script&gt;alert(\'foo\');&lt;/script&gt;';
+
+			timeline.data = MOCK_DATA;
+			timeline.data.firstName = dangerous;
+			timeline.data.events[0].content = dangerous;
+			timeline.render();
+
+			var frames = timeline.element.querySelector('.frames').children;
+			expect(frames[0].innerHTML).toEqual(safe + ' Bitly');
+			expect(frames[1].innerHTML).toEqual('At age 0, ' + safe + ' ' + safe);
+		});
 	});
 
 	describe('fetch', function () {

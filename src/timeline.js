@@ -15,6 +15,12 @@ var Timeline = (function (window, document, undefined) {
 	var YEAR_AS_MILLIS = 2000, // How many milliseconds should represent a year on the timeline
 		INTERVAL_DELAY = 250; // Tick every .25 seconds (allows accuracy when pausing without ticking too frequently)
 
+	function htmlSafe(html) {
+		var div = document.createElement('div');
+		div.appendChild(document.createTextNode(html));
+		return div.innerHTML;
+	}
+
 	/**
 	 * Timeline component
 	 *
@@ -61,7 +67,7 @@ var Timeline = (function (window, document, undefined) {
 			// Render title frame
 			var title = document.createElement('div');
 			title.className = 'frame active';
-			title.innerHTML = data.firstName + ' ' + data.lastName;
+			title.innerHTML = htmlSafe(data.firstName + ' ' + data.lastName);
 			frames.appendChild(title);
 
 			// Render event frames
@@ -70,7 +76,7 @@ var Timeline = (function (window, document, undefined) {
 					frame = document.createElement('div');
 
 				frame.className = 'frame staged';
-				frame.innerHTML = 'At age ' + event.age + ', ' + data.firstName + ' ' + event.content;
+				frame.innerHTML = htmlSafe('At age ' + event.age + ', ' + data.firstName + ' ' + event.content);
 
 				frames.appendChild(frame);
 			}
