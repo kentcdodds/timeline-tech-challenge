@@ -22,6 +22,10 @@ module.exports = function (grunt) {
 			test: {
 				files: ['src/**/*.js', 'test/**/*.js'],
 				tasks: ['test']
+			},
+			build: {
+				files: ['src/**/*.js'],
+				tasks: ['build']
 			}
 		},
 
