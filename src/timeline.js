@@ -175,6 +175,12 @@ var Timeline = (function (window, document, undefined) {
 
 		delete this.frames;
 		delete this.current;
+
+		// Reset className on frames
+		var frames = this.element.querySelector('#frames').children;
+		for (var i=0, l=frames.length; i<l; i++) {
+			frames[i].className = 'frame ' + (i === 0 ? 'active' : 'staged');
+		}
 	};
 
 	return Timeline;

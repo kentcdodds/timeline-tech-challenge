@@ -239,5 +239,22 @@ describe('timeline', function () {
 			expect(timeline.frames).toEqual(undefined);
 			expect(timeline.current).toEqual(undefined);
 		});
+
+		it('should reset frame className when reset is called', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+
+			var frames = timeline.element.querySelector('#frames').children,
+				i, l;
+			for (i=0, l=frames.length; i<l; i++) {
+				frames[i].className = 'frame ' + (i === l - 1 ? 'active' : 'staged');
+			}
+
+			timeline.reset();
+
+			for (i=0, l=frames.length; i<l; i++) {
+				expect(frames[i].className).toEqual('frame ' + (i === 0 ? 'active' : 'staged'));
+			}
+		});
 	});
 });
