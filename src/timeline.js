@@ -222,8 +222,9 @@ var Timeline = (function (window, document, undefined) {
 			}
 			// Otherwise clear the interval and update state
 			else {
-				clearInterval(this.timer);
 				this.__state(State.RESET);
+				clearInterval(this.timer);
+				delete this.timer;
 			}
 		}
 	};
