@@ -23,6 +23,8 @@ server = http.createServer(function (req, res) {
 		url = 'index.html'
 	} else if (req.url === '/timeline.json') {
 		url = 'timeline.json';
+	} else if (req.url.indexOf('/css/') === 0) {
+		url = req.url;
 	}
 
 	// If file exists pipe it to response, otherwise send 404

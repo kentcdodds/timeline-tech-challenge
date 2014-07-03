@@ -1,0 +1,51 @@
+* {
+	box-sizing: border-box;
+	color: #6b6b6b;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: large;
+}
+
+#timeline {
+	border: 1px solid #e9e9e9;
+	width: 500px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -150px;
+	margin-left: -250px;
+}
+
+#frames {
+	height: 100px;
+	overflow: hidden;
+	position: relative;
+}
+
+.frame {
+	height: 100px;
+	width: 500px;
+	text-align: center;
+	padding-top: 39px;
+	position: absolute;
+	top: -100px;
+	transition: top .5s;
+}
+.frame.active {
+	top: 0;
+}
+.frame.staged {
+	top: 100px;
+}
+
+#control {
+	background: #e9e9e9;
+	border: 0 none;
+	cursor: pointer;
+	width: 100%;
+	height: 50px;
+	outline: none;
+}
+#control:hover,
+#control:focus {
+	background: #e3e3e3;
+}

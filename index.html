@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<meta charset="utf-8"/>
+<title>Timeline</title>
+
+<link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+<div id="timeline">
+	<div id="frames">
+		<div class="frame active">At age 0, Chip was born</div>
+		<div class="frame staged">At age 4, Chip learned to ride a bike</div>
+		<div class="frame staged">At age 12, Chip was successfully potty trained</div>
+		<div class="frame staged">At age 17, Chip got his first job</div>
+		<div class="frame staged">At age 21, Chip graduated valedictorian</div>
+		<div class="frame staged">Fin</div>
+	</div>
+	<button id="control">Play</button>
+</div>
+
+<script>
+	var frames = document.querySelectorAll('.frame'),
+		index = 0,
+		timer;
+
+	timer = setInterval(function () {
+		if (index + 1 < frames.length) {
+			frames[index].className = 'frame';
+			frames[++index].className = 'frame active';
+		} else {
+			clearInterval(timer);
+		}
+	}, 2500);
+</script>
