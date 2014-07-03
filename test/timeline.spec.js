@@ -68,7 +68,7 @@ describe('timeline', function () {
 			timeline.render();
 
 			var frames = timeline.element.querySelector('.frames');
-			expect(frames.children.length).toEqual(MOCK_DATA.events.length + 1);
+			expect(frames.children.length).toEqual(1);
 			expect(frames.children[0].className).toEqual('frame active');
 			expect(frames.children[0].innerHTML).toEqual(MOCK_DATA.firstName + ' ' + MOCK_DATA.lastName);
 		});
@@ -81,6 +81,8 @@ describe('timeline', function () {
 			timeline.data.firstName = dangerous;
 			timeline.data.events[0].content = dangerous;
 			timeline.render();
+			timeline.__init();
+			timeline.__advance();
 
 			var frames = timeline.element.querySelector('.frames').children;
 			expect(frames[0].innerHTML).toEqual(safe + ' Bitly');
@@ -326,26 +328,27 @@ describe('timeline', function () {
 
 			var frames = timeline.element.querySelector('.frames').children;
 
-			timeline.current = 0;
-			timeline.__advance();
-			expect(frames[0].className).toEqual('frame');
-			expect(frames[1].className).toEqual('frame active');
-			expect(frames[2].className).toEqual('frame staged');
-			expect(frames[3].className).toEqual('frame staged');
+			function run(current) {
+				runs(function () {
+					timeline.current = current;
+					timeline.__advance();
+				});
 
-			timeline.current = 1;
-			timeline.__advance();
-			expect(frames[0].className).toEqual('frame');
-			expect(frames[1].className).toEqual('frame');
-			expect(frames[2].className).toEqual('frame active');
-			expect(frames[3].className).toEqual('frame staged');
+				waitsFor(function () {
+					return frames[0].className === 'frame' &&
+							frames[1].className === 'frame active';
+				});
 
-			timeline.current = 2;
-			timeline.__advance();
-			expect(frames[0].className).toEqual('frame');
-			expect(frames[1].className).toEqual('frame');
-			expect(frames[2].className).toEqual('frame');
-			expect(frames[3].className).toEqual('frame active');
+				runs(function () {
+					expect(frames.length).toEqual(2);
+					expect(frames[0].className).toEqual('frame');
+					expect(frames[1].className).toEqual('frame active');
+				});
+			}
+
+			for (var i=0, l=MOCK_DATA.events.length; i<l; i++) {
+				run(i);
+			}
 		});
 
 		it('should update on tick', function () {

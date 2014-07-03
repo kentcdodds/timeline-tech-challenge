@@ -15,6 +15,11 @@ var Timeline = (function (window, document, undefined) {
 	var YEAR_AS_MILLIS = 2000, // How many milliseconds should represent a year on the timeline
 		INTERVAL_DELAY = 250; // Tick every .25 seconds (allows accuracy when pausing without ticking too frequently)
 
+	/**
+	 * Prevent XSS attacks
+	 *
+	 * @param {String} html The markup that needs to be made safe
+	 */
 	function htmlSafe(html) {
 		var div = document.createElement('div');
 		div.appendChild(document.createTextNode(html));
@@ -69,17 +74,6 @@ var Timeline = (function (window, document, undefined) {
 			title.className = 'frame active';
 			title.innerHTML = htmlSafe(data.firstName + ' ' + data.lastName);
 			frames.appendChild(title);
-
-			// Render event frames
-			for (var i=0, l=data.events.length; i<l; i++) {
-				var event = data.events[i],
-					frame = document.createElement('div');
-
-				frame.className = 'frame staged';
-				frame.innerHTML = htmlSafe('At age ' + event.age + ', ' + data.firstName + ' ' + event.content);
-
-				frames.appendChild(frame);
-			}
 		});
 	};
 
@@ -206,9 +200,26 @@ var Timeline = (function (window, document, undefined) {
 	 * Internal method for advancing the current frame
 	 */
 	Timeline.prototype.__advance = function () {
-		var frames = this.element.querySelector('.frames').children;
-		frames[this.current].className = 'frame';
-		frames[this.current + 1].className = 'frame active';
+		var event = this.data.events[this.current],
+			frames = this.element.querySelector('.frames'),
+			frame = document.createElement('div');
+
+		// Remove legacy frame
+		if (frames.children.length === 2) {
+			frames.removeChild(frames.children[0]);
+		}
+
+		// Create next frame
+		frame.className = 'frame staged';
+		frame.innerHTML = htmlSafe('At age ' + event.age + ', ' + this.data.firstName + ' ' + event.content);
+		frames.appendChild(frame);
+
+		// Advance frames
+		setTimeout(function () {
+			frames.children[0].className = 'frame';
+			frames.children[1].className = 'frame active';
+		}, 10); // Delay is needed so that the new frame has a chance to render
+				// with the `staged` className thus allowing transition to work.
 	};
 
 	/**
