@@ -29,7 +29,7 @@ var Timeline = (function (window, document, undefined) {
 		parent.appendChild(this.element);
 
 		// Initialize state
-		this.reset();
+		this.reset(false);
 
 		this.fetch(function (data) {
 			// Make sure data and events exist
@@ -140,6 +140,7 @@ var Timeline = (function (window, document, undefined) {
 				if (self.current < self.frames.length) {
 					advance(self.current);
 				} else {
+					clearInterval(self.timer);
 					self.__state(State.RESET);
 				}
 			}
@@ -170,9 +171,10 @@ var Timeline = (function (window, document, undefined) {
 	/**
 	 * Reset this Timeline
 	 */
-	Timeline.prototype.reset = function () {
+	Timeline.prototype.reset = function (play) {
 		this.__state(State.PLAY);
 
+		delete this.timer;
 		delete this.frames;
 		delete this.current;
 
@@ -180,6 +182,11 @@ var Timeline = (function (window, document, undefined) {
 		var frames = this.element.querySelector('#frames').children;
 		for (var i=0, l=frames.length; i<l; i++) {
 			frames[i].className = 'frame ' + (i === 0 ? 'active' : 'staged');
+		}
+
+		// Automatically play if not explicitly instructed not to
+		if (play !== false) {
+			this.play();
 		}
 	};
 

@@ -234,7 +234,7 @@ describe('timeline', function () {
 			timeline.render();
 			timeline.play();
 			timeline.current = 1;
-			timeline.reset();
+			timeline.reset(false);
 
 			expect(timeline.frames).toEqual(undefined);
 			expect(timeline.current).toEqual(undefined);
@@ -250,11 +250,21 @@ describe('timeline', function () {
 				frames[i].className = 'frame ' + (i === l - 1 ? 'active' : 'staged');
 			}
 
-			timeline.reset();
+			timeline.reset(false);
 
 			for (i=0, l=frames.length; i<l; i++) {
 				expect(frames[i].className).toEqual('frame ' + (i === 0 ? 'active' : 'staged'));
 			}
+		});
+
+		it('sould automatically play when reset is called', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+			timeline.reset();
+
+			expect(timeline.timer).toNotEqual(undefined);
+			expect(timeline.current).toNotEqual(undefined);
+			expect(timeline.frames.length).toEqual(MOCK_DATA.events.length);
 		});
 	});
 });
