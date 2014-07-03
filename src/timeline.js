@@ -25,6 +25,9 @@ var Timeline = (function (window, document, undefined) {
 		frag.innerHTML = this.template;
 		parent.appendChild(frag.firstElementChild);
 
+		// Initialize to play mode
+		parent.querySelector('#control').innerHTML = 'Play';
+
 		this.fetch(function (data) {
 			// Make sure data and events exist
 			if (!data || !data.events) {

@@ -49,20 +49,16 @@ describe('timeline', function () {
 			expect(document.getElementById('timeline').parentNode).toEqual(document.body);
 		});
 
-		it('should provide a template', function () {
-			expect(timeline.template).toEqual('<div id="timeline"><div id="frames"></div><button id="control"></button></div>');
-		});
-
 		it('should render from a template', function () {
 			var parent = document.createElement('div');
 			timeline.render(parent);
-			expect(parent.innerHTML).toEqual(timeline.template);
+			expect(parent.innerHTML).toEqual('<div id="timeline"><div id="frames"></div><button id="control">Play</button></div>');
 		});
 
 		it('should render events', function () {
 			timeline.data = MOCK_DATA;
 			timeline.render(document.body);
-			expect(document.getElementById('frames').children.length).toEqual(3);
+			expect(document.getElementById('frames').children.length).toEqual(MOCK_DATA.events.length + 1);
 			expect(document.getElementById('frames').children[0].className).toEqual('frame active');
 			expect(document.getElementById('frames').children[0].innerHTML).toEqual(MOCK_DATA.firstName + ' ' + MOCK_DATA.lastName);
 		});
