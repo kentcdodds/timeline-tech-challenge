@@ -25,6 +25,14 @@ module.exports = function (grunt) {
 			}
 		},
 
+		copy: {
+			 dist: {
+                files: [
+                    {src: 'src/timeline.js', dest: 'dist/', expand: true, flatten: true}
+                ]
+            },
+		},
+
 		uglify: {
 			dist: {
 				files: {
@@ -35,5 +43,5 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask('test', ['jshint', 'karma:single']);
-	grunt.registerTask('build', ['uglify']);
+	grunt.registerTask('build', ['uglify', 'copy']);
 };
