@@ -1,4 +1,20 @@
 var Timeline = (function (window, document, undefined) {
+
+	/**
+	 * Constant for the state of the Timeline
+	 */
+	var State = {
+		PLAY: 'Play',
+		PAUSE: 'Pause',
+		RESET: 'Reset'
+	};
+
+	/**
+	 * Constants for handling the interval
+	 */
+	var YEAR_AS_MILLIS = 2000, // How many milliseconds should represent a year on the timeline
+		INTERVAL_DELAY = 250; // Tick every .25 seconds (allows accuracy when pausing without ticking too frequently)
+
 	/**
 	 * Timeline component
 	 *
@@ -87,38 +103,6 @@ var Timeline = (function (window, document, undefined) {
 	};
 
 	/**
-	 * Constant for the state of the Timeline
-	 */
-	var State = {
-		PLAY: 'Play',
-		PAUSE: 'Pause',
-		RESET: 'Reset'
-	};
-
-	/**
-	 * Internal method for updating the state.
-	 * Specifically this updates the label and action on the button.
-	 *
-	 * @param {String} state The state to update to (see State constant)
-	 */
-	Timeline.prototype.__state = function (state) {
-		if (state) {
-			var button = this.element.querySelector('#control'),
-				self = this;
-			button.innerHTML = state;
-			button.onclick = function () {
-				self[state.toLowerCase()]();
-			};
-		}
-	};
-
-	/**
-	 * Constants for handling the interval
-	 */
-	var YEAR_AS_MILLIS = 2000, // How many milliseconds should represent a year on the timeline
-		INTERVAL_DELAY = 250; // Tick every .25 seconds (allows accuracy when pausing without ticking too frequently)
-
-	/**
 	 * Play this Timeline
 	 */
 	Timeline.prototype.play = function () {
@@ -132,41 +116,18 @@ var Timeline = (function (window, document, undefined) {
 		// Reuse existing frames and current if available
 		if (typeof this.frames === 'undefined' ||
 			typeof this.current === 'undefined') {
-			this.frames = [];
-			for (var i=0, l=this.data.events.length; i<l; i++) {
-				var event = this.data.events[i],
-					start = event.age,
-					end = this.data.events[i+1] ? this.data.events[i+1].age : this.data.age;
-				this.frames[i] = (end - start) * (YEAR_AS_MILLIS / INTERVAL_DELAY);
-			}
-
-			this.current = 0;
+			this.__init();
 		}
 
 		// Setup timer to advance frames
 		var self = this;
 		this.timer = setInterval(function () {
-			self.frames[self.current]--;
-			if (self.frames[self.current] === 0) {
-				self.current++;
-				if (self.current < self.frames.length) {
-					advance(self.current);
-				} else {
-					clearInterval(self.timer);
-					self.__state(State.RESET);
-				}
-			}
+			self.__tick();
 		}, INTERVAL_DELAY);
-
-		function advance(current) {
-			var frames = self.element.querySelector('#frames').children;
-			frames[current].className = 'frame';
-			frames[current + 1].className = 'frame active';
-		}
 
 		// Advance to first slide
 		if (this.current === 0 && this.frames.length > 0) {
-			advance(0);
+			this.__advance();
 		}
 	};
 
@@ -199,6 +160,71 @@ var Timeline = (function (window, document, undefined) {
 		// Automatically play if not explicitly instructed not to
 		if (play !== false) {
 			this.play();
+		}
+	};
+
+	/**
+	 * Internal method for updating the state.
+	 * Specifically this updates the label and action on the button.
+	 *
+	 * @param {String} state The state to update to (see State constant)
+	 */
+	Timeline.prototype.__state = function (state) {
+		if (state) {
+			var button = this.element.querySelector('#control'),
+				self = this;
+			button.innerHTML = state;
+			button.onclick = function () {
+				self[state.toLowerCase()]();
+			};
+		}
+	};
+
+	/**
+	 * Internal method for initializing the frames to be played
+	 */
+	Timeline.prototype.__init = function () {
+		this.frames = [];
+		for (var i=0, l=this.data.events.length; i<l; i++) {
+			var event = this.data.events[i],
+				start = event.age,
+				end = this.data.events[i+1] ? this.data.events[i+1].age : this.data.age;
+			this.frames[i] = (end - start) * (YEAR_AS_MILLIS / INTERVAL_DELAY);
+		}
+
+		this.current = 0;
+	};
+
+	/**
+	 * Internal method for advancing the current frame
+	 */
+	Timeline.prototype.__advance = function () {
+		var frames = this.element.querySelector('#frames').children;
+		frames[this.current].className = 'frame';
+		frames[this.current + 1].className = 'frame active';
+	};
+
+	/**
+	 * Internal method for handling each tick of the interval
+	 */
+	Timeline.prototype.__tick = function () {
+		// Decrement remaining ticks for current frame
+		this.frames[this.current]--;
+
+		// If no more tick remaining...
+		if (this.frames[this.current] === 0) {
+			// Increment current frame
+			this.current++;
+
+			// Advance if more frames remain
+			if (this.current < this.frames.length) {
+				this.__advance();
+			}
+			// Otherwise clear the interval and update state
+			else {
+				clearInterval(this.timer);
+				this.__state(State.RESET);
+			}
 		}
 	};
 
