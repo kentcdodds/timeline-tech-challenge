@@ -34,9 +34,8 @@ describe('timeline', function () {
 		});
 
 		afterEach(function () {
-			var el = document.getElementById('timeline');
-			if (el && el.parentNode) {
-				el.parentNode.removeChild(el);
+			if (timeline.element && timeline.element.parentNode) {
+				timeline.element.parentNode.removeChild(timeline.element);
 			}
 		});
 
@@ -49,6 +48,11 @@ describe('timeline', function () {
 			expect(document.getElementById('timeline').parentNode).toEqual(document.body);
 		});
 
+		it('should render to document.body if no element is specified', function () {
+			timeline.render();
+			expect(document.getElementById('timeline').parentNode).toEqual(document.body);
+		});
+
 		it('should render from a template', function () {
 			var parent = document.createElement('div');
 			timeline.render(parent);
@@ -57,7 +61,7 @@ describe('timeline', function () {
 
 		it('should render events', function () {
 			timeline.data = MOCK_DATA;
-			timeline.render(document.body);
+			timeline.render();
 			expect(document.getElementById('frames').children.length).toEqual(MOCK_DATA.events.length + 1);
 			expect(document.getElementById('frames').children[0].className).toEqual('frame active');
 			expect(document.getElementById('frames').children[0].innerHTML).toEqual(MOCK_DATA.firstName + ' ' + MOCK_DATA.lastName);
@@ -99,6 +103,12 @@ describe('timeline', function () {
 			timeline = new Timeline();
 		});
 
+		afterEach(function () {
+			if (timeline.element && timeline.element.parentNode) {
+				timeline.element.parentNode.removeChild(timeline.element);
+			}
+		});
+
 		it('should provide a play method', function () {
 			expect(typeof timeline.play).toEqual('function');
 		});
@@ -109,6 +119,22 @@ describe('timeline', function () {
 
 		it('should provide a reset method', function () {
 			expect(typeof timeline.reset).toEqual('function');
+		});
+
+		it('should set state to pause when play is called', function () {
+			timeline.render();
+			var button = timeline.element.querySelector('#control');
+			button.innerHTML = '';
+			timeline.play();
+			expect(button.innerHTML).toEqual('Pause');
+		});
+
+		it('should set state to play when pause is called', function () {
+			timeline.render();
+			var button = timeline.element.querySelector('#control');
+			button.innerHTML = '';
+			timeline.pause();
+			expect(button.innerHTML).toEqual('Play');
 		});
 	});
 });

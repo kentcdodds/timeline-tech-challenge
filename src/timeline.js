@@ -23,10 +23,13 @@ var Timeline = (function (window, document, undefined) {
 	Timeline.prototype.render = function (parent) {
 		var frag = document.createElement('div');
 		frag.innerHTML = this.template;
-		parent.appendChild(frag.firstElementChild);
 
-		// Initialize to play mode
-		parent.querySelector('#control').innerHTML = 'Play';
+		this.element = frag.firstElementChild;
+		parent = parent || document.body;
+		parent.appendChild(this.element);
+
+		// Initialize state
+		this.reset();
 
 		this.fetch(function (data) {
 			// Make sure data and events exist
@@ -83,19 +86,45 @@ var Timeline = (function (window, document, undefined) {
 	};
 
 	/**
+	 * Constants for the state of the Timeline
+	 */
+	var State = {
+		PLAY: 'Play',
+		PAUSE: 'Pause',
+		RESET: 'Reset'
+	};
+
+	Timeline.prototype.__state = function (state) {
+		if (state) {
+			var button = this.element.querySelector('#control'),
+				self = this;
+			button.innerHTML = state;
+			button.onclick = function () {
+				self[state.toLowerCase()]();
+			};
+		}
+	};
+
+	/**
 	 * Play this Timeline
 	 */
-	Timeline.prototype.play = function () {};
+	Timeline.prototype.play = function () {
+		this.__state(State.PAUSE);
+	};
 
 	/**
 	 * Pause this Timeline
 	 */
-	Timeline.prototype.pause = function () {};
+	Timeline.prototype.pause = function () {
+		this.__state(State.PLAY);
+	};
 
 	/**
 	 * Reset this Timeline
 	 */
-	Timeline.prototype.reset = function () {};
+	Timeline.prototype.reset = function () {
+		this.__state(State.PLAY);
+	};
 
 	return Timeline;
 })(window, document);
