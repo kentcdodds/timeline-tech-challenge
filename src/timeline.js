@@ -35,7 +35,13 @@ var Timeline = (function (window, document, undefined) {
 			var frames = document.getElementById('frames');
 			frames.innerHTML = '';
 
-			// Render each frame
+			// Render title frame
+			var title = document.createElement('div');
+			title.className = 'frame active';
+			title.innerHTML = data.firstName + ' ' + data.lastName;
+			frames.appendChild(title);
+
+			// Render event frames
 			for (var i=0, l=data.events.length; i<l; i++) {
 				var event = data.events[i],
 					frame = document.createElement('div');

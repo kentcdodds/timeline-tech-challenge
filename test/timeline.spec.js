@@ -62,7 +62,9 @@ describe('timeline', function () {
 		it('should render events', function () {
 			timeline.data = MOCK_DATA;
 			timeline.render(document.body);
-			expect(document.getElementById('frames').children.length).toEqual(2);
+			expect(document.getElementById('frames').children.length).toEqual(3);
+			expect(document.getElementById('frames').children[0].className).toEqual('frame active');
+			expect(document.getElementById('frames').children[0].innerHTML).toEqual(MOCK_DATA.firstName + ' ' + MOCK_DATA.lastName);
 		});
 	});
 
