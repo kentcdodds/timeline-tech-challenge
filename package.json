@@ -9,12 +9,16 @@
     "url": "https://github.com/mzabriskie/timeline-tech-challenge.git"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "start": "node index"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-watch": "^0.6.1",
     "load-grunt-tasks": "^0.6.0"
+  },
+  "dependencies": {
+    "minimist": "^0.2.0"
   }
 }
