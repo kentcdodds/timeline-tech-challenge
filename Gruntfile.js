@@ -6,6 +6,18 @@ module.exports = function (grunt) {
 			all: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js']
 		},
 
+		karma: {
+			options: {
+				configFile: 'karma.conf.js'
+			},
+			single: {
+				singleRun: true
+			},
+			continuous: {
+				singleRun: false
+			}
+		},
+
 		watch: {
 			test: {
 				files: ['src/**/*.js', 'test/**/*.js'],
@@ -14,5 +26,5 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask('test', ['jshint']);
+	grunt.registerTask('test', ['jshint', 'karma:single']);
 };
