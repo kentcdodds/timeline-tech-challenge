@@ -93,4 +93,24 @@ describe('timeline', function () {
 			expect(spy).toHaveBeenCalled();
 		});
 	});
+
+	describe('controls', function () {
+		var timeline;
+
+		beforeEach(function () {
+			timeline = new Timeline();
+		});
+
+		it('should provide a play method', function () {
+			expect(typeof timeline.play).toEqual('function');
+		});
+
+		it('should provide a pause method', function () {
+			expect(typeof timeline.pause).toEqual('function');
+		});
+
+		it('should provide a reset method', function () {
+			expect(typeof timeline.reset).toEqual('function');
+		});
+	});
 });

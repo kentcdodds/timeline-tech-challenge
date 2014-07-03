@@ -48,6 +48,11 @@ var Timeline = (function (window, document, undefined) {
 		});
 	};
 
+	/**
+	 * Fetch the data from the server
+	 *
+	 * @param {Function} callback The function to invoke once data has been fetched
+	 */
 	Timeline.prototype.fetch = function (callback) {
 		if (typeof this.data === 'undefined') {
 			var xhr = new XMLHttpRequest();
@@ -67,6 +72,21 @@ var Timeline = (function (window, document, undefined) {
 			callback(this.data);
 		}
 	};
+
+	/**
+	 * Play this Timeline
+	 */
+	Timeline.prototype.play = function () {};
+
+	/**
+	 * Pause this Timeline
+	 */
+	Timeline.prototype.pause = function () {};
+
+	/**
+	 * Reset this Timeline
+	 */
+	Timeline.prototype.reset = function () {};
 
 	return Timeline;
 })(window, document);
