@@ -1,4 +1,4 @@
-# Articulate JS Tech Challenge
+# Timeline Tech Challenge [![Build Status](https://travis-ci.org/mzabriskie/timeline-tech-challenge.png?branch=master)](https://travis-ci.org/mzabriskie/timeline-tech-challenge)
 
 ## Installing
 
@@ -28,7 +28,7 @@ Then you can launch the solution in the browser:
 
 [http://127.0.0.1:3000](http://127.0.0.1:3000)
 
-## Developing
+## Watching
 
 While developing you may find it convenient to have your files watched so that testing and building happen automatically as files change.
 
