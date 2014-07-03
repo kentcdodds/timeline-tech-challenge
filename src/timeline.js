@@ -138,7 +138,7 @@ var Timeline = (function (window, document, undefined) {
 			if (self.frames[self.current] === 0) {
 				self.current++;
 				if (self.current < self.frames.length) {
-					advance(self.current - 1);
+					advance(self.current);
 				} else {
 					self.__state(State.RESET);
 				}
@@ -147,13 +147,13 @@ var Timeline = (function (window, document, undefined) {
 
 		function advance(current) {
 			var frames = self.element.querySelector('#frames').children;
-			frames[current + 1].className = 'frame';
-			frames[current + 2].className = 'frame active';
+			frames[current].className = 'frame';
+			frames[current + 1].className = 'frame active';
 		}
 
 		// Advance to first slide
 		if (this.current === 0 && this.frames.length > 0) {
-			advance(-1);
+			advance(0);
 		}
 	};
 
