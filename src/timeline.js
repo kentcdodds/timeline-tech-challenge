@@ -26,9 +26,9 @@ var Timeline = (function (window, document, undefined) {
 
 	// Timeline template
 	Timeline.prototype.template =
-		'<div id="timeline">' +
-			'<div id="frames"></div>' +
-			'<button id="control"></button>' +
+		'<div class="timeline">' +
+			'<div class="frames"></div>' +
+			'<button class="control"></button>' +
 		'</div>';
 
 	/**
@@ -47,6 +47,7 @@ var Timeline = (function (window, document, undefined) {
 		// Initialize state
 		this.reset(false);
 
+		var self = this;
 		this.fetch(function (data) {
 			// Make sure data and events exist
 			if (!data || !data.events) {
@@ -54,7 +55,7 @@ var Timeline = (function (window, document, undefined) {
 			}
 
 			// Get frames and clear content
-			var frames = document.getElementById('frames');
+			var frames = self.element.querySelector('.frames');
 			frames.innerHTML = '';
 
 			// Render title frame
@@ -152,7 +153,7 @@ var Timeline = (function (window, document, undefined) {
 		delete this.current;
 
 		// Reset className on frames
-		var frames = this.element.querySelector('#frames').children;
+		var frames = this.element.querySelector('.frames').children;
 		for (var i=0, l=frames.length; i<l; i++) {
 			frames[i].className = 'frame ' + (i === 0 ? 'active' : 'staged');
 		}
@@ -171,7 +172,7 @@ var Timeline = (function (window, document, undefined) {
 	 */
 	Timeline.prototype.__state = function (state) {
 		if (state) {
-			var button = this.element.querySelector('#control'),
+			var button = this.element.querySelector('.control'),
 				self = this;
 			button.innerHTML = state;
 			button.onclick = function () {
@@ -199,7 +200,7 @@ var Timeline = (function (window, document, undefined) {
 	 * Internal method for advancing the current frame
 	 */
 	Timeline.prototype.__advance = function () {
-		var frames = this.element.querySelector('#frames').children;
+		var frames = this.element.querySelector('.frames').children;
 		frames[this.current].className = 'frame';
 		frames[this.current + 1].className = 'frame active';
 	};

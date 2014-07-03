@@ -49,26 +49,28 @@ describe('timeline', function () {
 
 		it('should render to the element specified', function () {
 			timeline.render(document.body);
-			expect(document.getElementById('timeline').parentNode).toEqual(document.body);
+			expect(timeline.element.parentNode).toEqual(document.body);
 		});
 
 		it('should render to document.body if no element is specified', function () {
 			timeline.render();
-			expect(document.getElementById('timeline').parentNode).toEqual(document.body);
+			expect(timeline.element.parentNode).toEqual(document.body);
 		});
 
 		it('should render from a template', function () {
 			var parent = document.createElement('div');
 			timeline.render(parent);
-			expect(parent.innerHTML).toEqual('<div id="timeline"><div id="frames"></div><button id="control">Play</button></div>');
+			expect(parent.innerHTML).toEqual('<div class="timeline"><div class="frames"></div><button class="control">Play</button></div>');
 		});
 
 		it('should render events', function () {
 			timeline.data = MOCK_DATA;
 			timeline.render();
-			expect(document.getElementById('frames').children.length).toEqual(MOCK_DATA.events.length + 1);
-			expect(document.getElementById('frames').children[0].className).toEqual('frame active');
-			expect(document.getElementById('frames').children[0].innerHTML).toEqual(MOCK_DATA.firstName + ' ' + MOCK_DATA.lastName);
+
+			var frames = timeline.element.querySelector('.frames');
+			expect(frames.children.length).toEqual(MOCK_DATA.events.length + 1);
+			expect(frames.children[0].className).toEqual('frame active');
+			expect(frames.children[0].innerHTML).toEqual(MOCK_DATA.firstName + ' ' + MOCK_DATA.lastName);
 		});
 	});
 
@@ -119,7 +121,7 @@ describe('timeline', function () {
 
 		it('should set state to pause when play is called', function () {
 			timeline.render();
-			var button = timeline.element.querySelector('#control');
+			var button = timeline.element.querySelector('.control');
 			button.innerHTML = '';
 			timeline.play();
 
@@ -182,7 +184,7 @@ describe('timeline', function () {
 
 		it('should set state to play when pause is called', function () {
 			timeline.render();
-			var button = timeline.element.querySelector('#control');
+			var button = timeline.element.querySelector('.control');
 			button.innerHTML = '';
 			timeline.pause();
 
@@ -241,7 +243,7 @@ describe('timeline', function () {
 			timeline.data = MOCK_DATA;
 			timeline.render();
 
-			var frames = timeline.element.querySelector('#frames').children,
+			var frames = timeline.element.querySelector('.frames').children,
 				i, l;
 			for (i=0, l=frames.length; i<l; i++) {
 				frames[i].className = 'frame ' + (i === l - 1 ? 'active' : 'staged');
@@ -280,7 +282,7 @@ describe('timeline', function () {
 
 		it('should update state', function () {
 			timeline.render();
-			var button = timeline.element.querySelector('#control');
+			var button = timeline.element.querySelector('.control');
 
 			timeline.__state('Start');
 			expect(button.innerHTML).toEqual('Start');
@@ -308,7 +310,7 @@ describe('timeline', function () {
 			timeline.data = MOCK_DATA;
 			timeline.render();
 
-			var frames = timeline.element.querySelector('#frames').children;
+			var frames = timeline.element.querySelector('.frames').children;
 
 			timeline.current = 0;
 			timeline.__advance();
