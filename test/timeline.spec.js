@@ -141,9 +141,9 @@ describe('timeline', function () {
 
 			expect(Array.isArray(timeline.frames)).toBe(true);
 			expect(timeline.frames.length).toEqual(MOCK_DATA.events.length);
-			expect(timeline.frames[0]).toEqual(4);
-			expect(timeline.frames[1]).toEqual(8);
-			expect(timeline.frames[2]).toEqual(34);
+			expect(timeline.frames[0]).toEqual(32);
+			expect(timeline.frames[1]).toEqual(64);
+			expect(timeline.frames[2]).toEqual(272);
 		});
 
 		it('should track current frame when play is called', function () {

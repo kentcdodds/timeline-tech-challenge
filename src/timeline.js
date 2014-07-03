@@ -87,7 +87,7 @@ var Timeline = (function (window, document, undefined) {
 	};
 
 	/**
-	 * Constants for the state of the Timeline
+	 * Constant for the state of the Timeline
 	 */
 	var State = {
 		PLAY: 'Play',
@@ -95,6 +95,12 @@ var Timeline = (function (window, document, undefined) {
 		RESET: 'Reset'
 	};
 
+	/**
+	 * Internal method for updating the state.
+	 * Specifically this updates the label and action on the button.
+	 *
+	 * @param {String} state The state to update to (see State constant)
+	 */
 	Timeline.prototype.__state = function (state) {
 		if (state) {
 			var button = this.element.querySelector('#control'),
@@ -107,12 +113,18 @@ var Timeline = (function (window, document, undefined) {
 	};
 
 	/**
+	 * Constants for handling the interval
+	 */
+	var YEAR_AS_MILLIS = 2000, // How many milliseconds should represent a year on the timeline
+		INTERVAL_DELAY = 250; // Tick every .25 seconds (allows accuracy when pausing without ticking too frequently)
+
+	/**
 	 * Play this Timeline
 	 */
 	Timeline.prototype.play = function () {
 		this.__state(State.PAUSE);
 
-		// Shortcircuit if data hasn't been fetched
+		// Short circuit if data hasn't been fetched
 		if (!this.data) {
 			return;
 		}
@@ -125,7 +137,7 @@ var Timeline = (function (window, document, undefined) {
 				var event = this.data.events[i],
 					start = event.age,
 					end = this.data.events[i+1] ? this.data.events[i+1].age : this.data.age;
-				this.frames[i] = end - start;
+				this.frames[i] = (end - start) * (YEAR_AS_MILLIS / INTERVAL_DELAY);
 			}
 
 			this.current = 0;
@@ -144,7 +156,7 @@ var Timeline = (function (window, document, undefined) {
 					self.__state(State.RESET);
 				}
 			}
-		}, 2000);
+		}, INTERVAL_DELAY);
 
 		function advance(current) {
 			var frames = self.element.querySelector('#frames').children;
