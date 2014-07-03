@@ -141,9 +141,6 @@ describe('timeline', function () {
 
 			expect(Array.isArray(timeline.frames)).toBe(true);
 			expect(timeline.frames.length).toEqual(MOCK_DATA.events.length);
-			expect(timeline.frames[0]).toEqual(32);
-			expect(timeline.frames[1]).toEqual(64);
-			expect(timeline.frames[2]).toEqual(272);
 		});
 
 		it('should track current frame when play is called', function () {
@@ -265,6 +262,102 @@ describe('timeline', function () {
 			expect(timeline.timer).toNotEqual(undefined);
 			expect(timeline.current).toNotEqual(undefined);
 			expect(timeline.frames.length).toEqual(MOCK_DATA.events.length);
+		});
+	});
+
+	describe('internals', function () {
+		var timeline;
+
+		beforeEach(function () {
+			timeline = new Timeline();
+		});
+
+		afterEach(function () {
+			if (timeline.element && timeline.element.parentNode) {
+				timeline.element.parentNode.removeChild(timeline.element);
+			}
+		});
+
+		it('should update state', function () {
+			timeline.render();
+			var button = timeline.element.querySelector('#control');
+
+			timeline.__state('Start');
+			expect(button.innerHTML).toEqual('Start');
+
+			timeline.__state('Pause');
+			expect(button.innerHTML).toEqual('Pause');
+
+			timeline.__state('Reset');
+			expect(button.innerHTML).toEqual('Reset');
+		});
+
+		it('should init frames', function () {
+			timeline.data = MOCK_DATA;
+			timeline.__init();
+
+			expect(timeline.current).toEqual(0);
+			expect(Array.isArray(timeline.frames)).toBe(true);
+			expect(timeline.frames.length).toEqual(MOCK_DATA.events.length);
+			expect(timeline.frames[0]).toEqual(32);
+			expect(timeline.frames[1]).toEqual(64);
+			expect(timeline.frames[2]).toEqual(272);
+		});
+
+		it('should advance frames', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+
+			var frames = timeline.element.querySelector('#frames').children;
+
+			timeline.current = 0;
+			timeline.__advance();
+			expect(frames[0].className).toEqual('frame');
+			expect(frames[1].className).toEqual('frame active');
+			expect(frames[2].className).toEqual('frame staged');
+			expect(frames[3].className).toEqual('frame staged');
+
+			timeline.current = 1;
+			timeline.__advance();
+			expect(frames[0].className).toEqual('frame');
+			expect(frames[1].className).toEqual('frame');
+			expect(frames[2].className).toEqual('frame active');
+			expect(frames[3].className).toEqual('frame staged');
+
+			timeline.current = 2;
+			timeline.__advance();
+			expect(frames[0].className).toEqual('frame');
+			expect(frames[1].className).toEqual('frame');
+			expect(frames[2].className).toEqual('frame');
+			expect(frames[3].className).toEqual('frame active');
+		});
+
+		it('should update on tick', function () {
+			timeline.data = MOCK_DATA;
+			timeline.render();
+			timeline.__init();
+
+			expect(timeline.frames[timeline.current]).toEqual(32);
+
+			timeline.__tick();
+			expect(timeline.current).toEqual(0);
+			expect(timeline.frames[timeline.current]).toEqual(31);
+
+			var i;
+			// Tick through the rest of the first frame
+			for (i=0; i<31; i++) {
+				timeline.__tick();
+			}
+			expect(timeline.current).toEqual(1);
+			expect(timeline.frames[timeline.current]).toEqual(64);
+
+			// Tick through all the remaining frames
+			for (i=0; i<336; i++) {
+				timeline.__tick();
+			}
+			expect(timeline.current).toEqual(3);
+			expect(timeline.frames[timeline.current-1]).toEqual(0);
+			expect(timeline.timer).toEqual(undefined);
 		});
 	});
 });
